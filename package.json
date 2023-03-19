@@ -1,0 +1,21 @@
+{
+  "name": "autotableclass",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "electron": "^23.1.4"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appid": {
+      "from" : "../config.conf",
+      "to" : "../"
+    }
+  }
+}
