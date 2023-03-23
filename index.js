@@ -1,67 +1,60 @@
-const { app,BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const fs = require("fs");
 
-const createWindow = () =>{
-  const win = new BrowserWindow({ 
-  width: 800, 
-  height: 600, 
-  frame: false,
-  transparent: true,
-  
-//  webPreferences: {
-//    /*preload: path.join(__dirname, 'preload.js')*/
-//    nodeIntegration: true,
-//   }
-  
+const createWindow = () => {
+
+  const win = new BrowserWindow({
+    width: 730,
+    height: 250,
+    //frame : false,
+    //transparent: true,
+
+    webPreferences: {
+      /*preload: path.join(__dirname, 'preload.js')*/
+      nodeIntegration: true,
+      contextIsolation: false
+     }
   })
+  win.setPosition(1200,0)
   win.loadFile('index.html')
+  //win.setSkipTaskbar(true)
+  win.webContents.send("class",getClass().classNum)
+  console.log(getClass().classNum )
+ 
 }
-  app.whenReady().then(() => {
-    createWindow()
-  })
 
- // win.loadFile('index.html')
-
-function readFilePath(classname) {
+const ipcMain = require('electron').ipcMain;
   
-  const newFile_path = path.join(__dirname, 'class.json').replace(/\\/g, "\/");
+function getClass() {
+  
+  const newFile_path = "config.json"
 
   fs.exists(newFile_path, function(exists) {
-    console.log(exists? "文件存在" : "文件不存在");
+    //console.log(exists);
     if (!exists) {
       $(".errroInformation").show();
       $(".errroInformation").text("文件不存在");
       return;
     } else {
       let result = JSON.parse(fs.readFileSync(newFile_path));   //读取本地json
+      //console.log(result.class)
+      classNum = result.classnum
+      return result;
     }
   }
 )}
 
-class action {
-  constructor() {
-    winControl(action); {
-      const browserWindow = remote.getCurrentWindow();
-      switch (action) {
-        case 'minimize':
-          browserWindow.minimize();
-          break;
-        case 'maximize':
-          if (this.isMaximized) {
-            // if (browserWindow.isMaximized()) {
-            browserWindow.unmaximize();
-          } else {
-            browserWindow.maximize();
-          }
-          // this.isMaximized = browserWindow.isMaximized()
-          this.isMaximized = !this.isMaximized;
-          break;
-        case 'close':
-          browserWindow.close();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-}
+ipcMain.on('class', function(event, arg) {
+  //console.log(arg);  // prints "我是渲染进程的test2"
+  event.sender.send('class', getClass());
+
+});
+
+
+
+
+app.whenReady().then(() => {
+
+  createWindow()
+
+})

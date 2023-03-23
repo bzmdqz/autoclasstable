@@ -1,38 +1,32 @@
 <!DOCTYPE html>
+
+
 <html>
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer;
+    ipcRenderer.on('class', function(event, arg) {
+      document.getElementById("picture").setAttribute("src","http://127.0.0.1:8080/getTimetable?class="+arg)
+      console.log(arg); // prints "我是主进程的test1"
+    });
+
+</script>
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>你好!</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content: https://ssl.gstatic.com; 
+    media-src * blob: 'self' http://* 'unsafe-inline' 'unsafe-eval'; 
+    style-src * 'self' 'unsafe-inline'; 
+    img-src * 'self' data: content:; 
+    connect-src * blob:;">
+    <title>课表自动获取</title>
+
     <style type="text/css">
-      html {overflow-y: hidden;}
-      ::-webkit-scrollbar {
-      width: 2px; /*滚动条宽度*/
-      /*height: 2px;  !*滚动条高度*!*/}
-      ::-webkit-scrollbar-track {
-      /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
-      /*border-radius: 10px;  !*滚动条的背景区域的圆角*!*/
-      /*background-color: red;!*滚动条的背景颜色*!*/}
-      /*定义滑块 内阴影+圆角*/    
-      ::-webkit-scrollbar-thumb {
-      border-radius: 99px; /*滚动条的圆角*/
-      /*-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);*/
-      /*background-color: green;  !*滚动条的背景颜色*!*/}
- 
+      
     </style>
-    <script type="text/javascript">
-      function exportData() {
-          let data = getForm().getFieldsValue();
-          exportTowerHistoryToExcel({ deviceId, createTime: data.startTime }).then((url) => {
-        downLoadFile(url);
-      });
-     }
-    </script>
   </head>
-  <body>
-    <h1>123456</h1>
-    <button type="button" style="-webkit-app-region: drag">1231321</button>
-    <img herf=url width="800" height="600">
+  <body style="-webkit-app-region: drag">
+    <img id="picture" style="max-width:100%;overflow:hidden;" src="http://127.0.0.1:8080/getTimetable?class=221" alt="">
   </body>
+
+
 </html>

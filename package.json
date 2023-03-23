@@ -1,5 +1,5 @@
 {
-  "name": "autotableclass",
+  "name": "autotimetable",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,9 +13,11 @@
   "author": "",
   "license": "ISC",
   "build": {
-    "appid": {
-      "from" : "../config.conf",
-      "to" : "../"
+    "productName": "auto-timetable",
+    "appId": "com.gl18.autotimetable",
+    "extraResources":  {
+      "from": "./config.json",
+      "to": "../"
     }
-  }
+   }
 }
