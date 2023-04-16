@@ -2,13 +2,54 @@
 
 
 <html>
+  <style type="css/text"  >
+
+  </style>
+  <script src="jquery-3.6.4.min.js"></script>
   <script>
     const ipcRenderer = require('electron').ipcRenderer;
-    ipcRenderer.on('class', function(event, arg) {
+    /*ipcRenderer.on('class', function(event, arg) {
       document.getElementById("picture").setAttribute("src","http://127.0.0.1:8080/getTimetable?class="+arg)
       console.log(arg); // prints "我是主进程的test1"
-    });
+    });*/
+    const ipc = require('electron').ipcRenderer;
+    const fs = require("fs");
+    const process = require("process")
+    window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.min.js');
+    const newFile_path = "./config.json"
 
+
+
+    fs.exists(newFile_path, function(exists) {
+    //console.log(exists);
+    if (!exists) {
+      fs.writeFile(newFile_path,"{\n\"classNum\": 2213,\n \"host\":\"127.0.0.1\"\n}",(e)=> {})
+      //$(".errroInformation").show();
+      //$(".errroInformation").text("文件不存在");
+      ipc.on("exit",function(event,data){ //如果没有数据需要传，可以不写参数
+      console.log(data);
+      })
+      ipc.send("exit",data);
+      //后面跟着的data就是自己想传的数据，不想传不写就可以了
+      process.exit()
+      return;
+    } else {
+      let result = JSON.parse(fs.readFileSync(newFile_path));   //读取本地json
+      console.log(result.class)
+      classNum = result.classnum
+      document.getElementById("picture").setAttribute("src","http://"+result.host+"/getTimetable/today?class="+result.classNum)
+      ipc.send("hereyoua","data");  //后面跟着的data就是自己想传的数据，不想传不写就可以了
+      }
+    }
+  )
+    
+</script>
+<script type="application/javascript">
+  window.onload = xiaoxi;
+  function xiaoxi(){
+  
+  }
+  
 </script>
   <head>
     <meta charset="UTF-8">
@@ -19,14 +60,55 @@
     img-src * 'self' data: content:; 
     connect-src * blob:;">
     <title>课表自动获取</title>
-
     <style type="text/css">
-      
+      /*css*/
     </style>
   </head>
   <body style="-webkit-app-region: drag">
-    <img id="picture" style="max-width:100%;overflow:hidden;" src="http://127.0.0.1:8080/getTimetable?class=221" alt="">
+    <img id="picture" style="max-width:100%;overflow:hidden;" src="http://127.0.0.1:8080/getPicture">
+    <div id="ann" onshow="updateAnn()" style="color:#ffffff;">
+
+    </div>
   </body>
 
+<script>
+function updateAnn(){
+  const newFile_path = "./config.json"
+
+    fs.exists(newFile_path, function(exists) {
+    //console.log(exists);
+    if (!exists) {
+      fs.writeFile(newFile_path,"{\n\"classNum\": 2213,\n \"host\":\"127.0.0.1\"\n}",(e)=> {})
+      //$(".errroInformation").show();
+      //$(".errroInformation").text("文件不存在");
+      ipc.on("exit",function(event,data){ //如果没有数据需要传，可以不写参数
+      console.log(data);
+      })
+      ipc.send("exit",data);
+      //后面跟着的data就是自己想传的数据，不想传不写就可以了
+      process.exit()
+      return "null";
+    } else {
+      let result = JSON.parse(fs.readFileSync(newFile_path));   //读取本地json
+      const annURI = "http://"+result.host+"/announcement/get"
+      $.ajax({url:annURI,success:function(result2){
+          let annJSON = JSON.parse(result2)
+          jArray = annJSON.data
+      console.log(jArray)
+      for(var element in jArray){
+        console.log(element)
+        $("#ann").append("<h3>"+jArray[element].content+"</h3>")
+      }
+
+      }});
+
+
+        }
+      }
+    )
+}
+
+  updateAnn()
+</script>
 
 </html>
